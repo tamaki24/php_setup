@@ -1,0 +1,28 @@
+#version: "3.8"
+services:
+  db:
+    container_name: postgres
+    image: postgres:13.6-bullseye
+    environment:
+      POSTGRES_PASSWORD: password
+      POSTGRES_INITDB_ARGS: "--encoding=UTF-8 --locale=C"
+      TZ: Asia/Tokyo
+    ports:
+      - "5432:5432"
+    volumes:
+      - db-data:/var/lib/postgresql/data
+
+  app:
+    container_name: app
+    build:
+      dockerfile: docker-php/app.Dockerfile
+    ports:
+      - "8080:80"
+    volumes:
+      - .:/var/www/html
+    working_dir: /app
+    depends_on:
+      - db
+
+volumes:
+  db-data:
